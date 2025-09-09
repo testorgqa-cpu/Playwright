@@ -10,6 +10,7 @@ Feature: Login on the Page
         Then I click on the "PIM" option from the Sidebar
         Then I click on the "Add" button
         When I fill the employee details First Name "John" and Last Name "David"
+        Then I fill in the employee id 
         When I switch on the toggle button
         Then I fill in random username and password
         Then I click on the "Save" button

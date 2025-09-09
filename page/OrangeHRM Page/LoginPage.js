@@ -186,6 +186,25 @@ class LoginPage {
     }
   }
 
+  /* this function is used to fill in the employee id */
+  async fillEmployeeId() {
+    try {
+      const employeeId = Math.floor(100000 + Math.random() * 900000).toString();
+
+      const employeeIdInput =
+        "//label[text()='Employee Id']/following::div//input[@class='oxd-input oxd-input--active']";
+
+      await page.fill(employeeIdInput, employeeId);
+
+      console.log(`Filled Employee ID: ${employeeId}`);
+
+      this.generatedEmployeeId = employeeId;
+      return employeeId;
+    } catch (error) {
+      throw new Error(`Failed to fill Employee ID: ${error.message}`);
+    }
+  }
+
   /* This function verifies the employee name and logs it */
   async verifyEmployeeName(expectedName) {
     try {
@@ -212,25 +231,52 @@ class LoginPage {
     }
   }
 
-  /* This function fills Employee Information details */
+  /* This funciton is used fill in the employee details like nationality, marital status, DOB etc */
   async fillEmployeeInformation({ Nationality, MaritalStatus, DateOfBirth }) {
     try {
       if (Nationality) {
         await page.click(this.locators.nationalityDropdown);
         const nationalityOption = `//div[@role='option' and normalize-space()='${Nationality}']`;
         await page.click(nationalityOption);
-        console.log(`Selected Nationality: ${Nationality}`);
+        console.log(`✅ Selected Nationality: ${Nationality}`);
       }
 
       if (MaritalStatus) {
         await page.click(this.locators.maritalStatusDropdown);
         const maritalOption = `//div[@role='option' and normalize-space()='${MaritalStatus}']`;
         await page.click(maritalOption);
-        console.log(`Selected Marital Status: ${MaritalStatus}`);
+        console.log(`✅ Selected Marital Status: ${MaritalStatus}`);
       }
 
       if (DateOfBirth) {
-        await page.fill(this.locators.dateOfBirthInput, DateOfBirth);
+        const dobLocator1 =
+          "//label[text()='Date of Birth']/following::input[@placeholder='yyyy-mm-dd']";
+        const dobLocator2 =
+          "//label[text()='Date of Birth']/following::input[@placeholder='yyyy-dd-mm']";
+
+        let dobInput;
+
+        if (
+          await page
+            .locator(dobLocator1)
+            .isVisible({ timeout: 5000 })
+            .catch(() => false)
+        ) {
+          dobInput = dobLocator1;
+          console.log("Using DOB field with format yyyy-mm-dd");
+        } else if (
+          await page
+            .locator(dobLocator2)
+            .isVisible({ timeout: 5000 })
+            .catch(() => false)
+        ) {
+          dobInput = dobLocator2;
+          console.log("Using DOB field with format yyyy-dd-mm");
+        } else {
+          throw new Error("Could not find Date of Birth input field");
+        }
+
+        await page.fill(dobInput, DateOfBirth);
         console.log(`Entered Date of Birth: ${DateOfBirth}`);
       }
     } catch (error) {

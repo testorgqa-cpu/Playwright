@@ -1,5 +1,7 @@
 const { Given, When, Then, And } = require("@cucumber/cucumber");
-const { EcommercePage } = require("../page/EcommercePage.js");
+const {
+  EcommercePage,
+} = require("../../page/BStack Ecom Page/EcommercePage.js");
 
 const ecomPage = new EcommercePage();
 
